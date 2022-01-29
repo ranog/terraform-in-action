@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-west-2"
+  profile = "tf-user"
 }
 
 resource "aws_instance" "helloworld" {
