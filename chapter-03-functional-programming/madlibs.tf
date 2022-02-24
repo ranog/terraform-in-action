@@ -1,5 +1,11 @@
 terraform {
   required_version = ">= 0.15"
+  required_providers {
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.0"
+    }
+  }
 }
 
 variable "words" {
@@ -11,6 +17,26 @@ variable "words" {
       adverbs       = list(string),
       numbers       = list(number),
   })
+
+resource "random_shuffle" "randow_nouns" {
+  input = var.words["nouns"]
+}
+
+resource "random_shuffle" "randow_adjectives" {
+  input = var.words["adjectives"]
+}
+
+resource "random_shuffle" "randow_verbs" {
+  input = var.words["verbs"]
+}
+
+resource "random_shuffle" "randow_adverbs" {
+  input = var.words["adverbs"]
+}
+
+resource "random_shuffle" "randow_numbers" {
+  input = var.words["numbers"]
+}
 
   validation {
     condition     = length(var.words["nouns"]) >= 20
