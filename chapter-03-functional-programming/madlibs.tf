@@ -19,24 +19,28 @@ variable "words" {
   })
 }
 
+locals {
+  uppercase_words = {for k, v in var.words : k => [for s in v : upper(s)]}
+}
+
 resource "random_shuffle" "random_nouns" {
-  input = var.words["nouns"]
+  input = local.uppercase_words["nouns"]
 }
 
 resource "random_shuffle" "random_adjectives" {
-  input = var.words["adjectives"]
+  input = local.uppercase_words["adjectives"]
 }
 
 resource "random_shuffle" "random_verbs" {
-  input = var.words["verbs"]
+  input = local.uppercase_words["verbs"]
 }
 
 resource "random_shuffle" "random_adverbs" {
-  input = var.words["adverbs"]
+  input = local.uppercase_words["adverbs"]
 }
 
 resource "random_shuffle" "random_numbers" {
-  input = var.words["numbers"]
+  input = local.uppercase_words["numbers"]
 }
 
 output "mad_libs" {
