@@ -26,6 +26,7 @@ variable "num_files" {
 
 locals {
   uppercase_words = {for k, v in var.words : k => [for s in v : upper(s)]}
+  templates = tolist(fileset(path.module, "templates/*.txt"))
 }
 
 resource "random_shuffle" "random_nouns" {
@@ -53,13 +54,26 @@ resource "random_shuffle" "random_numbers" {
   input = local.uppercase_words["numbers"]
 }
 
-output "mad_libs" {
-  value = templatefile("${path.module}/templates/alice.txt",
+# output "mad_libs" {
+#   value = templatefile("${path.module}/templates/alice.txt",
+#     {
+#       nouns       = random_shuffle.random_nouns.result
+#       adjectives  = random_shuffle.random_adjectives.result
+#       verbs       = random_shuffle.random_verbs.result
+#       adverbs     = random_shuffle.random_adverbs.result
+#       numbers     = random_shuffle.random_numbers.result
+#   })
+# }
+
+resource "local_file" "mad_libs" {
+  count = var.num_files
+  filename = "madlibs/madlibs~${count.index}.txt"
+  content = templatefile(element(local.templates, count.index),
     {
-      nouns       =random_shuffle.random_nouns.result
-      adjectives  =random_shuffle.random_adjectives.result
-      verbs       =random_shuffle.random_verbs.result
-      adverbs     =random_shuffle.random_adverbs.result
-      numbers     =random_shuffle.random_numbers.result
-  })
+      nouns       = random_shuffle.random_nouns[count.index].result
+      adjectives  = random_shuffle.random_adjectives[count.index].result
+      verbs       = random_shuffle.random_verbs[count.index].result
+      adverbs     = random_shuffle.random_adverbs[count.index].result
+      numbers     = random_shuffle.random_numbers[count.index].result
+    })
 }
